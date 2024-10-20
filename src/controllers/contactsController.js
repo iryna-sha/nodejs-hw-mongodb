@@ -1,28 +1,41 @@
-import { getAllContacts, getContactById } from '../services/contacts.js';
+import { model, Schema } from 'mongoose';
+import {
+  contactTypeList,
+  phoneNumberRegexp,
+} from '../../constants/contactsConstants.js';
 
-export const getContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
-  res.json({
-    status: 200,
-    message: 'Sucessfully found contacts!',
-    data: contacts,
-  });
-};
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
 
-export const getContactByIdController = async (req, res) => {
-  const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+    phoneNumber: {
+      type: String,
+      match: phoneNumberRegexp,
+      required: true,
+    },
 
-  if (!contact) {
-    res.status(404).json({
-      message: 'Contact not found',
-    });
-    return;
-  }
+    email: {
+      type: String,
+    },
+    isFavorite: {
+      type: Boolean,
+      default: false,
+    },
 
-  res.json({
-    status: 200,
-    message: 'Sucessfully found contact with id {contactId}!',
-    data: contact,
-  });
-};
+    contactType: {
+      type: String,
+      enum: contactTypeList,
+      required: true,
+      default: 'personal',
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
+);
+
+export const ContactsCollection = model('contacts', contactSchema);
