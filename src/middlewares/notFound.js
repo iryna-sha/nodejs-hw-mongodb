@@ -1,7 +1,6 @@
-import createHttpError from 'http-errors';
-
-const notFoundMiddleware = () => {
-  throw createHttpError(404, 'Route not found');
+export const notFoundHandler = (req, res) => {
+  res.status(404).json({
+    status: 404,
+    message: 'Contact not found',
+  });
 };
-
-export default notFoundMiddleware;
